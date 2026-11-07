@@ -1,17 +1,6 @@
 import { Instructor } from '../models/Instructor.js';
+import bcrypt from 'bcryptjs';
 import Joi from 'joi';
-
-// =============================================================================
-//  INSTRUCTOR PORTAL CONTROLLER — FIXED (NoSQL injection lab)
-// =============================================================================
-// Validation is inline here with Joi (no separate validators file).
-// Combined with express-mongo-sanitize at the app level, this closes every
-// attack from Flow.md:
-//   - Attack 1 ($ne/$gt login bypass)  -> Joi.string() rejects non-string input
-//   - Attack 2 (role[$ne] data leak)   -> .unknown(false) allowlist + .select()
-//   - Attack 3 ($regex extraction)     -> Joi.string() blocks regex objects outright
-//   - Attack 4 ($where RCE)            -> .unknown(false) + mongoSanitize()
-// =============================================================================
 
 const loginSchema = Joi.object({
   username: Joi.string().trim().min(3).max(50).required(),
@@ -24,7 +13,6 @@ const searchSchema = Joi.object({
 }).unknown(false);
 
 function publicProfile(doc) {
-  // FIXED: no apiKey / privateEmail / privatePhone / password in the response.
   return {
     id: doc._id.toString(),
     name: doc.name,
@@ -43,7 +31,7 @@ export async function loginInstructor(req, res, next) {
     }
 
     const instructor = await Instructor.findOne({ username: value.username }).select('+password');
-    const isMatch = instructor && instructor.password === value.password;
+    const isMatch = instructor && (await bcrypt.compare(value.password, instructor.password));
     if (!isMatch) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
