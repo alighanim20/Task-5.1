@@ -10,7 +10,7 @@ const loginSchema = Joi.object({
 const searchSchema = Joi.object({
   name: Joi.string().trim().max(50),
   department: Joi.string().trim().max(50),
-});
+}).unknown(true); // FIXED: allow unrelated keys through; only name/department are ever read
 
 function publicProfile(doc) {
   return {
