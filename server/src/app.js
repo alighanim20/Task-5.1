@@ -1,6 +1,7 @@
 import express from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
+import mongoSanitize from 'express-mongo-sanitize';
 import authRoutes from './routes/auth.js';
 import reviewRoutes from './routes/reviews.js';
 import userRoutes from './routes/users.js';
