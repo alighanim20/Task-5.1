@@ -10,7 +10,7 @@ const loginSchema = Joi.object({
 const searchSchema = Joi.object({
   name: Joi.string().trim().max(50),
   department: Joi.string().trim().max(50),
-}).unknown(false);
+});
 
 function publicProfile(doc) {
   return {
@@ -22,7 +22,6 @@ function publicProfile(doc) {
   };
 }
 
-// POST /api/instructors/login
 export async function loginInstructor(req, res, next) {
   try {
     const { error, value } = loginSchema.validate(req.body);
@@ -42,7 +41,6 @@ export async function loginInstructor(req, res, next) {
   }
 }
 
-// GET /api/instructors
 export async function getDirectory(req, res, next) {
   try {
     const instructors = await Instructor.find()
@@ -55,7 +53,6 @@ export async function getDirectory(req, res, next) {
   }
 }
 
-// GET /api/instructors/search
 export async function searchInstructors(req, res, next) {
   try {
     const { error, value } = searchSchema.validate(req.query);
