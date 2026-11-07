@@ -12,6 +12,7 @@ const app = express();
 app.use(morgan('dev'));
 app.use(cors({ origin: 'http://localhost:5175', credentials: false }));
 app.use(express.json());
+app.use(mongoSanitize()); // FIXED: strips $-prefixed keys and "." from body/query/params
 
 app.get('/api/health', (req, res) => res.json({ ok: true }));
 
